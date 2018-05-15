@@ -254,8 +254,8 @@ t-distributed stochastic neighbor embedding, created by van der Maaten and Hinto
 
 **How to use the app**
 
-To train your own t-SNE, you can input your own high-dimensional dataset and the corresponding labels inside the upload fields. For convenience, small sample datasets are included inside the data folder. The training can take a lot of time depending on the size of the dataset (the complete MNIST dataset could take 15-30 min), so it is **recommended to clone the repo and run the app locally if you want to use bigger datasets**. [You can find the repository containing this model here.](https://github.com/plotly/dash-tsne)''')
-    ],
+To train your own t-SNE, you can input your own high-dimensional dataset and the corresponding labels inside the upload fields. For convenience, small sample datasets are included inside the data folder. [You can also download them here](https://www.dropbox.com/sh/l79mcmlqil7w7so/AACfQhp7lUS90sZUedsqAzWOa?dl=0&lst=). The training can take a lot of time depending on the size of the dataset (the complete MNIST dataset could take 15-30 min), so it is **recommended to clone the repo and run the app locally if you want to use bigger datasets**. [You can find the repository containing this model here.](https://github.com/plotly/dash-tsne)
+''')],
         style={
             'margin-top': '15px'
         },
@@ -438,7 +438,7 @@ def update_graph(n_clicks, perplexity, n_iter, learning_rate, pca_dim, data_div,
 
         # Catches Heroku server timeout
         except:
-            error_message = "We were unable to train the t-SNE model due to timeout. Try to clone the repo and run the program locally."
+            error_message = "We were unable to train the t-SNE model due to timeout. Try to run it again, or to clone the repo and run the program locally."
             kl_divergence, end_time = None, None
 
     return [
