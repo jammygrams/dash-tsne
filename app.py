@@ -437,8 +437,7 @@ def update_graph(n_clicks, perplexity, n_iter, learning_rate, pca_dim, data_div,
             end_time = time.time() - start_time
 
         # Catches Heroku server timeout
-        except Exception as e:
-            print(e)
+        except:
             error_message = "We were unable to train the t-SNE model due to timeout. Try to clone the repo and run the program locally."
             kl_divergence, end_time = None, None
 
