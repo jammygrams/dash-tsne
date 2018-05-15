@@ -9,3 +9,5 @@ mnist_label.csv
 input_2000.csv
 input_750.csv
 input_data.csv
+data/mnist_3000_labels.csv
+data/mnist_3000_input.csv
