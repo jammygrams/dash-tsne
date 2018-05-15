@@ -12,11 +12,11 @@ t-distributed stochastic neighbor embedding, created by van der Maaten and Hinto
 
 **How to use the app**
 
-To train your own t-SNE, you can input your own high-dimensional dataset and the corresponding labels inside the upload fields. For convenience, small sample datasets are included inside the data folder. The training can take a lot of time depending on the size of the dataset (the complete MNIST dataset could take 15-30 min), so it is recommended to clone the repo and run the app locally if you want to use bigger datasets.
+To train your own t-SNE, you can input your own high-dimensional dataset and the corresponding labels inside the upload fields. For convenience, small sample datasets are included inside the data folder. [You can also download them here](https://www.dropbox.com/sh/l79mcmlqil7w7so/AACfQhp7lUS90sZUedsqAzWOa?dl=0&lst=). The training can take a lot of time depending on the size of the dataset (the complete MNIST dataset could take 15-30 min), so it is **recommended to clone the repo and run the app locally if you want to use bigger datasets**. [You can find the repository containing this model here.](https://github.com/plotly/dash-tsne)
 
 **Generating data**
 
-`generate_data.py` is included to download, flatten and normalize datasets, so that they can be directly used in this app. It uses keras.datasets, which means that you need install keras. To use the script, simply run in terminal:
+`generate_data.py` is included to download, flatten and normalize datasets, so that they can be directly used in this app. It uses keras.datasets, which means that you need install keras. To use the script, simply go to the path containing it and run in terminal:
 
 ```python generate_data.py [dataset_name] [sample_size]```
 
