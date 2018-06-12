@@ -1,0 +1,3 @@
+img:after {
+    content: attr(alt);
+}
