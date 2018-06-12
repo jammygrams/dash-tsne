@@ -1,4 +1,4 @@
-
+*.csv
 *.iml
 *.xml
 mnist2500_labels.txt
