@@ -10,3 +10,4 @@ flask==1.0.1
 flask_cors
 gunicorn==19.8.1
 scipy==1.0.1
+pillow==4.2.1
