@@ -4,7 +4,7 @@ from sklearn.manifold import TSNE
 import numpy as np
 import pandas as pd
 
-datasets = ["wikipedia_3000"]
+datasets = ["wikipedia_3000", "twitter_3000", "crawler_3000"]
 iterations_ls = [250, 500, 750, 1000]
 perplexity_ls = [3, 10, 30, 50, 100]
 pca_dim_ls = [25, 50, 100]

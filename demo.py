@@ -17,8 +17,8 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
 
-IMAGE_DATASETS = ['mnist_3000', 'cifar_3000', 'fashion_3000']
-WORD_EMBEDDINGS = ['wikipedia_3000', 'twitter_3000', 'crawler_3000']
+IMAGE_DATASETS = ('mnist_3000', 'cifar_gray_3000', 'fashion_3000')
+WORD_EMBEDDINGS = ('wikipedia_3000', 'twitter_3000', 'crawler_3000')
 
 
 def merge(a, b):
@@ -240,13 +240,15 @@ def demo_callbacks(app):
         return figure
 
     def generate_figure_word_vec(embedding_df):
+        embedding_df = embedding_df[:1000]
         scatter = go.Scatter3d(
             name=embedding_df.index,
             x=embedding_df['x'],
             y=embedding_df['y'],
             z=embedding_df['z'],
             text=embedding_df.index,
-            textposition='top',
+            textposition='middle-center',
+            showlegend=False,
             mode='text',
             marker=dict(
                 size=2.5,
@@ -263,7 +265,7 @@ def demo_callbacks(app):
 
     @app.server.before_first_request
     def load_image_data():
-        global data_dict
+        global data_dict, _figure
 
         data_dict = {
             'mnist_3000': pd.read_csv("data/mnist_3000_input.csv"),
@@ -273,6 +275,7 @@ def demo_callbacks(app):
             'crawler_3000': pd.read_csv('data/crawler_3000.csv'),
             # 'twitter_3000': pd.read_csv('data/twitter_3000.csv')
         }
+
 
     @app.callback(Output('graph-3d-plot-tsne', 'figure'),
                   [Input('dropdown-dataset', 'value'),
@@ -337,9 +340,8 @@ def demo_callbacks(app):
 
             # Retrieve the image corresponding to the index
             image_vector = data_dict[dataset].iloc[hovered_idx]
-            if dataset == 'cifar_3000':
-                image_np = image_vector.values.reshape(32, 32, 3).astype(np.float64)
-
+            if dataset == 'cifar_gray_3000':
+                image_np = image_vector.values.reshape(32, 32).astype(np.float64)
             else:
                 image_np = image_vector.values.reshape(28, 28).astype(np.float64)
 
@@ -356,4 +358,4 @@ def demo_callbacks(app):
         if dataset in IMAGE_DATASETS:
             return "Click a data point to display its image:"
         elif dataset in WORD_EMBEDDINGS:
-            return "Click a data point to display embedding heatmap:"
+            return
