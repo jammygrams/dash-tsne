@@ -9,9 +9,4 @@ mnist_label.csv
 input_2000.csv
 input_750.csv
 input_data.csv
-data/mnist_3000*
 data/cifar_3000*
-data/fashion_3000*
-data/crawler_3000.csv
-data/twitter_3000.csv
-data/wikipedia_3000.csv
