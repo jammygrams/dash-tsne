@@ -17,6 +17,10 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
 
+IMAGE_DATASETS = ['mnist_3000', 'cifar_3000', 'fashion_3000']
+WORD_EMBEDDINGS = ['wikipedia_3000', 'twitter_3000', 'crawler_3000']
+
+
 def merge(a, b):
     return dict(a, **b)
 
@@ -264,7 +268,7 @@ def demo_callbacks(app):
         data_dict = {
             'mnist_3000': pd.read_csv("data/mnist_3000_input.csv"),
             'fashion_3000': pd.read_csv("data/fashion_3000_input.csv"),
-            'cifar_3000': pd.read_csv("data/cifar_3000_input.csv"),
+            'cifar_gray_3000': pd.read_csv("data/cifar_gray_3000_input.csv"),
             'wikipedia_3000': pd.read_csv('data/wikipedia_3000.csv'),
             'crawler_3000': pd.read_csv('data/crawler_3000.csv'),
             # 'twitter_3000': pd.read_csv('data/twitter_3000.csv')
@@ -288,7 +292,7 @@ def demo_callbacks(app):
                 return go.Figure()
 
             # For Image datasets
-            if dataset in ['mnist_3000', 'cifar_3000', 'fashion_3000']:
+            if dataset in IMAGE_DATASETS:
                 embedding_df['label'] = embedding_df.index
 
                 groups = embedding_df.groupby('label')
@@ -313,7 +317,7 @@ def demo_callbacks(app):
                                   perplexity,
                                   pca_dim,
                                   learning_rate):
-        if clickData and dataset in ['mnist_3000', 'cifar_3000', 'fashion_3000']:
+        if clickData and dataset in IMAGE_DATASETS:
             # Load the same dataset as the one displayed
             path = f'demo_embeddings/{dataset}/iterations_{iterations}/perplexity_{perplexity}/pca_{pca_dim}/learning_rate_{learning_rate}'
 
@@ -349,7 +353,7 @@ def demo_callbacks(app):
     @app.callback(Output('div-plot-hover-message', 'children'),
                   [Input('dropdown-dataset', 'value')])
     def display_hover_message(dataset):
-        if dataset in ['mnist_3000', 'cifar_3000', 'fashion_3000']:
+        if dataset in IMAGE_DATASETS:
             return "Click a data point to display its image:"
-        elif dataset in ['wikipedia_3000', 'twitter_3000', 'crawler_3000']:
+        elif dataset in WORD_EMBEDDINGS:
             return "Click a data point to display embedding heatmap:"
