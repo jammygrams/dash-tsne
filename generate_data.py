@@ -74,7 +74,7 @@ elif dataset_name.lower() in ['cifar_gray', 'cifar10_gray', 'cifargray']:
     X, y = cifar10.load_data()[0]
     selected_idx = cifar_idx
     X = np.moveaxis(X, 1, 3)
-    X = rgb2gray(X)
+    X = rgb2gray(X) * 255
     print("Array Shape:", X.shape)
 
 elif dataset_name.lower() in ["fashion", "fashion_mnist", "fashionmnist"]:

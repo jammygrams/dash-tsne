@@ -13,9 +13,9 @@ from io import BytesIO
 from dash.dependencies import Input, Output, State
 import pandas as pd
 import plotly.graph_objs as go
+import scipy.spatial.distance as spatial_distance
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
-
 
 IMAGE_DATASETS = ('mnist_3000', 'cifar_gray_3000', 'fashion_3000')
 WORD_EMBEDDINGS = ('wikipedia_3000', 'twitter_3000', 'crawler_3000')
@@ -49,7 +49,13 @@ def Card(children, **kwargs):
             'padding': 20,
             'margin': 5,
             'borderRadius': 5,
-            'border': 'thin lightgrey solid'
+            'border': 'thin lightgrey solid',
+
+            # Remove possibility to select the text for better UX
+            'user-select': 'none',
+            '-moz-user-select': 'none',
+            '-webkit-user-select': 'none',
+            '-ms-user-select': 'none'
         }, kwargs.get('style', {})),
         **omit(['style'], kwargs)
     )
@@ -76,12 +82,12 @@ def NamedSlider(name, short, min, max, step, val, marks=None):
         ])
 
 
-def NamedInlineRadioItems(name, short, options, val):
+def NamedInlineRadioItems(name, short, options, val, **kwargs):
     return html.Div(
         id=f'div-{short}',
-        style={
+        style=merge({
             'display': 'inline-block'
-        },
+        }, kwargs.get('style', {})),
         children=[
             f'{name}:',
             dcc.RadioItems(
@@ -97,7 +103,8 @@ def NamedInlineRadioItems(name, short, options, val):
                     'margin-left': '7px'
                 }
             )
-        ]
+        ],
+        **omit(['style'], kwargs)
     )
 
 
@@ -137,7 +144,7 @@ demo_layout = html.Div(
             html.Div(className="eight columns", children=[
                 dcc.Graph(
                     id='graph-3d-plot-tsne',
-                    style={'height': '95vh'}
+                    style={'height': '98vh'}
                 )
             ]),
 
@@ -149,8 +156,10 @@ demo_layout = html.Div(
                         options=[
                             {'label': 'MNIST', 'value': 'mnist_3000'},
                             {'label': 'Fashion MNIST', 'value': 'fashion_3000'},
-                            {'label': 'Wikipedia', 'value': 'wikipedia_3000'},
-                            {'label': 'Web Crawler', 'value': 'crawler_3000'}
+                            {'label': 'CIFAR 10 (Grayscale)', 'value': 'cifar_gray_3000'},
+                            {'label': 'Wikipedia Word Embedding', 'value': 'wikipedia_3000'},
+                            {'label': 'Web Crawler Word Embedding', 'value': 'crawler_3000'},
+                            {'label': 'Twitter Word Embedding', 'value': 'twitter_3000'},
                         ],
                         placeholder="Select a dataset"
                     ),
@@ -193,18 +202,30 @@ demo_layout = html.Div(
                         step=None,
                         val=100,
                         marks={i: i for i in [10, 50, 100, 200]}
-                    )
+                    ),
+
+                    html.Div(id='div-wordemb-controls', style={'display': 'none'}, children=[
+                        NamedInlineRadioItems(
+                            name="Display Mode",
+                            short="wordemb-display-mode",
+                            options=[
+                                {'label': ' Regular', 'value': 'regular'},
+                                {'label': ' Nearest Neighbors', 'value': 'neighbors'}
+                            ],
+                            val='regular'),
+
+                        dcc.Dropdown(id='dropdown-word-selected', placeholder='Select word to display its neighbors')
+                    ])
                 ]),
 
                 Card([
-                    html.Div(id='div-plot-hover-message'),
+                    html.Div(id='div-plot-click-message',
+                             style={'text-align': 'center',
+                                    'margin-bottom': '7px',
+                                    'font-weight': 'bold'}
+                             ),
 
-                    html.Img(
-                        id='img-plot-hover-display',
-                        style={'height': '20vh',
-                               'display': 'block',
-                               'margin': 'auto'}
-                    ),
+                    html.Div(id='div-plot-click-display')
                 ])
             ])
         ])
@@ -213,7 +234,7 @@ demo_layout = html.Div(
 
 
 def demo_callbacks(app):
-    def generate_figure_image(groups):
+    def generate_figure_image(groups, layout):
         data = []
 
         for idx, val in groups:
@@ -226,21 +247,44 @@ def demo_callbacks(app):
                 textposition='top',
                 mode='markers',
                 marker=dict(
-                    size=2.5,
-                    symbol='circle-dot'
+                    size=3,
+                    symbol='circle'
                 )
             )
             data.append(scatter)
 
         figure = go.Figure(
             data=data,
-            layout=go.Layout(margin=dict(l=0, r=0, b=0, t=0))
+            layout=layout
         )
 
         return figure
 
-    def generate_figure_word_vec(embedding_df):
-        embedding_df = embedding_df[:1000]
+    def generate_figure_word_vec(embedding_df, layout, wordemb_display_mode, selected_word, dataset):
+        # Regular displays the full scatter plot with only circles
+        if wordemb_display_mode == 'regular':
+            plot_mode = 'markers'
+
+        # Nearest Neighbors displays only the 200 nearest neighbors of the selected_word, in text rather than circles
+        elif wordemb_display_mode == 'neighbors':
+            if not selected_word:
+                return go.Figure()
+
+            plot_mode = 'text'
+
+            # Get the nearest neighbors indices using Euclidean distance
+
+            vector = data_dict[dataset].set_index('0')
+            selected_vec = vector.loc[selected_word]
+            def compare_pd(vector):
+                return spatial_distance.euclidean(vector, selected_vec)
+            distance_map = vector.apply(compare_pd, axis=1)
+            neighbors_idx = distance_map.sort_values()[:100].index
+
+            # Select those neighbors from the embedding_df
+            embedding_df = embedding_df.loc[neighbors_idx]
+
+
         scatter = go.Scatter3d(
             name=embedding_df.index,
             x=embedding_df['x'],
@@ -249,16 +293,16 @@ def demo_callbacks(app):
             text=embedding_df.index,
             textposition='middle-center',
             showlegend=False,
-            mode='text',
+            mode=plot_mode,
             marker=dict(
-                size=2.5,
-                symbol='circle-dot'
+                size=3,
+                symbol='circle'
             )
         )
 
         figure = go.Figure(
             data=[scatter],
-            layout=go.Layout(margin=dict(l=0, r=0, b=0, t=0))
+            layout=layout
         )
 
         return figure
@@ -273,8 +317,32 @@ def demo_callbacks(app):
             'cifar_gray_3000': pd.read_csv("data/cifar_gray_3000_input.csv"),
             'wikipedia_3000': pd.read_csv('data/wikipedia_3000.csv'),
             'crawler_3000': pd.read_csv('data/crawler_3000.csv'),
-            # 'twitter_3000': pd.read_csv('data/twitter_3000.csv')
+            'twitter_3000': pd.read_csv('data/twitter_3000.csv', encoding = "ISO-8859-1")
         }
+
+    @app.callback(Output('div-wordemb-controls', 'style'),
+                  [Input('dropdown-dataset', 'value')])
+    def show_wordemb_controls(dataset):
+        if dataset in WORD_EMBEDDINGS:
+            return None
+        else:
+            return {'display': 'none'}
+
+    @app.callback(Output('dropdown-word-selected', 'disabled'),
+                  [Input('radio-wordemb-display-mode', 'value')])
+    def disable_word_selection(mode):
+        if mode == 'neighbors':
+            return False
+        else:
+            return True
+
+    @app.callback(Output('dropdown-word-selected', 'options'),
+                  [Input('dropdown-dataset', 'value')])
+    def fill_dropdown_word_selection_options(dataset):
+        if dataset in WORD_EMBEDDINGS:
+            return [{'label': i, 'value': i} for i in data_dict[dataset].iloc[:, 0].tolist()]
+        else:
+            return []
 
 
     @app.callback(Output('graph-3d-plot-tsne', 'figure'),
@@ -282,8 +350,10 @@ def demo_callbacks(app):
                    Input('slider-iterations', 'value'),
                    Input('slider-perplexity', 'value'),
                    Input('slider-pca-dimension', 'value'),
-                   Input('slider-learning-rate', 'value')])
-    def generate_plot(dataset, iterations, perplexity, pca_dim, learning_rate):
+                   Input('slider-learning-rate', 'value'),
+                   Input('dropdown-word-selected', 'value'),
+                   Input('radio-wordemb-display-mode', 'value')])
+    def display_3d_scatter_plot(dataset, iterations, perplexity, pca_dim, learning_rate, selected_word, wordemb_display_mode):
         if dataset:
             path = f'demo_embeddings/{dataset}/iterations_{iterations}/perplexity_{perplexity}/pca_{pca_dim}/learning_rate_{learning_rate}'
 
@@ -291,36 +361,62 @@ def demo_callbacks(app):
                 embedding_df = pd.read_csv(path + f'/data.csv', index_col=0)
 
             except FileNotFoundError as error:
-                print(error, "The dataset was not found. Please generate it using generate_demo_embeddings.py")
+                print(error, "\nThe dataset was not found. Please generate it using generate_demo_embeddings.py")
                 return go.Figure()
+
+            # Plot layout
+            axes = dict(
+                title='',
+                showgrid=True,
+                zeroline=False,
+                showticklabels=False
+            )
+
+            layout = go.Layout(
+                margin=dict(l=0, r=0, b=0, t=0),
+                scene=dict(
+                    xaxis=axes,
+                    yaxis=axes,
+                    zaxis=axes
+                )
+            )
 
             # For Image datasets
             if dataset in IMAGE_DATASETS:
                 embedding_df['label'] = embedding_df.index
 
                 groups = embedding_df.groupby('label')
-                figure = generate_figure_image(groups)
+                figure = generate_figure_image(groups, layout)
 
             # Everything else is word embeddings
+            elif dataset in WORD_EMBEDDINGS:
+                figure = generate_figure_word_vec(
+                    embedding_df=embedding_df,
+                    layout=layout,
+                    wordemb_display_mode=wordemb_display_mode,
+                    selected_word=selected_word,
+                    dataset=dataset
+                )
+
             else:
-                figure = generate_figure_word_vec(embedding_df)
+                figure = go.Figure()
 
             return figure
 
-    @app.callback(Output('img-plot-hover-display', 'src'),
-                  [Input('graph-3d-plot-tsne', 'clickData')],
-                  [State('dropdown-dataset', 'value'),
-                   State('slider-iterations', 'value'),
-                   State('slider-perplexity', 'value'),
-                   State('slider-pca-dimension', 'value'),
-                   State('slider-learning-rate', 'value')])
-    def display_click_point_image(clickData,
-                                  dataset,
-                                  iterations,
-                                  perplexity,
-                                  pca_dim,
-                                  learning_rate):
-        if clickData and dataset in IMAGE_DATASETS:
+    @app.callback(Output('div-plot-click-display', 'children'),
+                  [Input('graph-3d-plot-tsne', 'clickData'),
+                   Input('dropdown-dataset', 'value'),
+                   Input('slider-iterations', 'value'),
+                   Input('slider-perplexity', 'value'),
+                   Input('slider-pca-dimension', 'value'),
+                   Input('slider-learning-rate', 'value')])
+    def display_click_image(clickData,
+                            dataset,
+                            iterations,
+                            perplexity,
+                            pca_dim,
+                            learning_rate):
+        if dataset in IMAGE_DATASETS and clickData:
             # Load the same dataset as the one displayed
             path = f'demo_embeddings/{dataset}/iterations_{iterations}/perplexity_{perplexity}/pca_{pca_dim}/learning_rate_{learning_rate}'
 
@@ -328,34 +424,46 @@ def demo_callbacks(app):
                 embedding_df = pd.read_csv(path + f'/data.csv')
 
             except FileNotFoundError as error:
-                print(error, "The dataset was not found. Please generate it using generate_demo_embeddings.py")
+                print(error, "\nThe dataset was not found. Please generate it using generate_demo_embeddings.py")
                 return
 
-            # Convert the point hovered into float64 numpy array
-            hover_point_np = np.array([clickData['points'][0][i] for i in ['x', 'y', 'z']]).astype(np.float64)
-            # Create a boolean mask of the point hovered, truth value exists at only one row
-            bool_mask_hover = embedding_df.loc[:, 'x':'z'].eq(hover_point_np).all(axis=1)
-            # Retrieve the index of the point hovered
-            hovered_idx = embedding_df[bool_mask_hover].index[0]
+            # Convert the point clicked into float64 numpy array
+            click_point_np = np.array([clickData['points'][0][i] for i in ['x', 'y', 'z']]).astype(np.float64)
+            # Create a boolean mask of the point clicked, truth value exists at only one row
+            bool_mask_click = embedding_df.loc[:, 'x':'z'].eq(click_point_np).all(axis=1)
+            # Retrieve the index of the point clicked, given it is present in the set
+            if bool_mask_click.any():
+                clicked_idx = embedding_df[bool_mask_click].index[0]
 
-            # Retrieve the image corresponding to the index
-            image_vector = data_dict[dataset].iloc[hovered_idx]
-            if dataset == 'cifar_gray_3000':
-                image_np = image_vector.values.reshape(32, 32).astype(np.float64)
-            else:
-                image_np = image_vector.values.reshape(28, 28).astype(np.float64)
+                # Retrieve the image corresponding to the index
+                image_vector = data_dict[dataset].iloc[clicked_idx]
+                if dataset == 'cifar_gray_3000':
+                    image_np = image_vector.values.reshape(32, 32).astype(np.float64)
+                else:
+                    image_np = image_vector.values.reshape(28, 28).astype(np.float64)
 
-            image_b64 = numpy_to_b64(image_np)
+                # Encode image into base 64
+                image_b64 = numpy_to_b64(image_np)
 
-            return 'data:image/png;base64, ' + image_b64
+                return html.Img(
+                    src='data:image/png;base64, ' + image_b64,
+                    style={
+                        'height': '25vh',
+                        'display': 'block',
+                        'margin': 'auto'
+                    }
+                )
+        return None
 
-        else:
-            return
-
-    @app.callback(Output('div-plot-hover-message', 'children'),
-                  [Input('dropdown-dataset', 'value')])
-    def display_hover_message(dataset):
+    @app.callback(Output('div-plot-click-message', 'children'),
+                  [Input('dropdown-dataset', 'value'),
+                   Input('graph-3d-plot-tsne', 'clickData')])
+    def display_click_message(dataset, clickData):
         if dataset in IMAGE_DATASETS:
-            return "Click a data point to display its image:"
+            if clickData:
+                return "Image Selected"
+            else:
+                return "Click a data point on the scatter plot to display its corresponding image."
+
         elif dataset in WORD_EMBEDDINGS:
             return
