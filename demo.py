@@ -14,11 +14,13 @@ from dash.dependencies import Input, Output, State
 import pandas as pd
 import plotly.graph_objs as go
 import scipy.spatial.distance as spatial_distance
-from sklearn.decomposition import PCA
-from sklearn.manifold import TSNE
 
 IMAGE_DATASETS = ('mnist_3000', 'cifar_gray_3000', 'fashion_3000')
 WORD_EMBEDDINGS = ('wikipedia_3000', 'twitter_3000', 'crawler_3000')
+
+
+with open('demo_description.md', 'r') as file:
+    demo_md = file.read()
 
 
 def merge(a, b):
@@ -96,7 +98,8 @@ def NamedInlineRadioItems(name, short, options, val, **kwargs):
                 value=val,
                 labelStyle={
                     'display': 'inline-block',
-                    'margin-right': '7px'
+                    'margin-right': '7px',
+                    'font-weight': 300
                 },
                 style={
                     'display': 'inline-block',
@@ -154,12 +157,12 @@ demo_layout = html.Div(
                         id='dropdown-dataset',
                         searchable=False,
                         options=[
-                            {'label': 'MNIST', 'value': 'mnist_3000'},
+                            {'label': 'MNIST Digits', 'value': 'mnist_3000'},
                             {'label': 'Fashion MNIST', 'value': 'fashion_3000'},
                             {'label': 'CIFAR 10 (Grayscale)', 'value': 'cifar_gray_3000'},
-                            {'label': 'Wikipedia Word Embedding', 'value': 'wikipedia_3000'},
-                            {'label': 'Web Crawler Word Embedding', 'value': 'crawler_3000'},
-                            {'label': 'Twitter Word Embedding', 'value': 'twitter_3000'},
+                            {'label': 'Wikipedia (GloVe)', 'value': 'wikipedia_3000'},
+                            {'label': 'Web Crawler (GloVe)', 'value': 'crawler_3000'},
+                            {'label': 'Twitter (GloVe)', 'value': 'twitter_3000'},
                         ],
                         placeholder="Select a dataset"
                     ),
@@ -210,7 +213,7 @@ demo_layout = html.Div(
                             short="wordemb-display-mode",
                             options=[
                                 {'label': ' Regular', 'value': 'regular'},
-                                {'label': ' Nearest Neighbors', 'value': 'neighbors'}
+                                {'label': ' Top-100 Neighbors', 'value': 'neighbors'}
                             ],
                             val='regular'),
 
@@ -218,17 +221,31 @@ demo_layout = html.Div(
                     ])
                 ]),
 
-                Card([
+                Card(style={'padding': '5px'}, children=[
                     html.Div(id='div-plot-click-message',
                              style={'text-align': 'center',
                                     'margin-bottom': '7px',
                                     'font-weight': 'bold'}
                              ),
 
-                    html.Div(id='div-plot-click-display')
+                    html.Div(id='div-plot-click-image'),
+
+                    html.Div(id='div-plot-click-wordemb')
                 ])
             ])
-        ])
+        ]),
+
+        # Demo Description
+        html.Div(
+            className='row',
+            children=html.Div(
+                style={
+                    'width': '75%',
+                    'margin': '30px auto',
+                },
+                children=dcc.Markdown(demo_md)
+            )
+        )
     ]
 )
 
@@ -273,7 +290,6 @@ def demo_callbacks(app):
             plot_mode = 'text'
 
             # Get the nearest neighbors indices using Euclidean distance
-
             vector = data_dict[dataset].set_index('0')
             selected_vec = vector.loc[selected_word]
             def compare_pd(vector):
@@ -283,7 +299,6 @@ def demo_callbacks(app):
 
             # Select those neighbors from the embedding_df
             embedding_df = embedding_df.loc[neighbors_idx]
-
 
         scatter = go.Scatter3d(
             name=embedding_df.index,
@@ -296,6 +311,7 @@ def demo_callbacks(app):
             mode=plot_mode,
             marker=dict(
                 size=3,
+                color='#ED9C69',
                 symbol='circle'
             )
         )
@@ -402,7 +418,7 @@ def demo_callbacks(app):
 
             return figure
 
-    @app.callback(Output('div-plot-click-display', 'children'),
+    @app.callback(Output('div-plot-click-image', 'children'),
                   [Input('graph-3d-plot-tsne', 'clickData'),
                    Input('dropdown-dataset', 'value'),
                    Input('slider-iterations', 'value'),
@@ -454,10 +470,56 @@ def demo_callbacks(app):
                 )
         return None
 
+    @app.callback(Output('div-plot-click-wordemb', 'children'),
+                  [Input('graph-3d-plot-tsne', 'clickData'),
+                   Input('dropdown-dataset', 'value')])
+    def display_click_word_neighbors(clickData, dataset):
+        if dataset in WORD_EMBEDDINGS and clickData:
+            selected_word = clickData['points'][0]['text']
+
+            # Get the nearest neighbors indices using Euclidean distance
+            vector = data_dict[dataset].set_index('0')
+            selected_vec = vector.loc[selected_word]
+            def compare_pd(vector):
+                return spatial_distance.euclidean(vector, selected_vec)
+            distance_map = vector.apply(compare_pd, axis=1)
+            nearest_neighbors = distance_map.sort_values()[1:6]
+
+            trace = go.Bar(
+                x=nearest_neighbors.values,
+                y=nearest_neighbors.index,
+                width=0.5,
+                orientation='h'
+            )
+
+            layout = go.Layout(
+                title=f'5 nearest neighbors of "{selected_word}"',
+                xaxis=dict(title='Euclidean Distance'),
+                margin=go.Margin(l=60, r=60, t=35, b=35)
+            )
+
+            fig = go.Figure(data=[trace], layout=layout)
+
+            return dcc.Graph(
+                id='graph-bar-nearest-neighbors-word',
+                figure=fig,
+                style={'height': '25vh'},
+                config={'displayModeBar': False}
+            )
+
+        else:
+            return None
+
     @app.callback(Output('div-plot-click-message', 'children'),
-                  [Input('dropdown-dataset', 'value'),
-                   Input('graph-3d-plot-tsne', 'clickData')])
-    def display_click_message(dataset, clickData):
+                  [Input('graph-3d-plot-tsne', 'clickData'),
+                   Input('dropdown-dataset', 'value')])
+    def display_click_message(clickData, dataset):
+        """
+        Displays message shown when a point in the graph is clicked, depending whether it's an image or word
+        :param clickData:
+        :param dataset:
+        :return:
+        """
         if dataset in IMAGE_DATASETS:
             if clickData:
                 return "Image Selected"
@@ -465,4 +527,8 @@ def demo_callbacks(app):
                 return "Click a data point on the scatter plot to display its corresponding image."
 
         elif dataset in WORD_EMBEDDINGS:
-            return
+            if clickData:
+                return None
+            else:
+                return "Click a word on the plot to see its top 5 neighbors."
+
