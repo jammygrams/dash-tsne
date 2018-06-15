@@ -241,7 +241,9 @@ local_layout = html.Div([
 
     html.Div([
         dcc.Markdown('''
-To view the source code, please visit the [GitHub Repository](https://github.com/plotly/dash-tsne). To view pre-generated simulations of t-SNE, check out the [demo app](https://dash-tsne.herokuapp.com). 
+This is the local version of the t-SNE explorer. To view the source code, please visit the 
+[GitHub Repository](https://github.com/plotly/dash-tsne). 
+To view pre-generated simulations of t-SNE, check out the [demo app](https://dash-tsne.herokuapp.com). 
 ''')],
         style={
             'margin-top': '15px'
