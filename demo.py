@@ -157,12 +157,13 @@ demo_layout = html.Div(
                         id='dropdown-dataset',
                         searchable=False,
                         options=[
+                            # TODO: Generate more data
                             {'label': 'MNIST Digits', 'value': 'mnist_3000'},
-                            {'label': 'Fashion MNIST', 'value': 'fashion_3000'},
-                            {'label': 'CIFAR 10 (Grayscale)', 'value': 'cifar_gray_3000'},
-                            {'label': 'Wikipedia (GloVe)', 'value': 'wikipedia_3000'},
-                            {'label': 'Web Crawler (GloVe)', 'value': 'crawler_3000'},
+                            # {'label': 'Fashion MNIST', 'value': 'fashion_3000'},
+                            # {'label': 'CIFAR 10 (Grayscale)', 'value': 'cifar_gray_3000'},
                             {'label': 'Twitter (GloVe)', 'value': 'twitter_3000'},
+                            {'label': 'Wikipedia (GloVe)', 'value': 'wikipedia_3000'},
+                            # {'label': 'Web Crawler (GloVe)', 'value': 'crawler_3000'},
                         ],
                         placeholder="Select a dataset"
                     ),
