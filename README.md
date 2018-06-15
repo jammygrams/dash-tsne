@@ -26,6 +26,12 @@ which will create the csv file with the corresponding parameters. At the moment,
 * Fashion_MNIST
 
 
-The following are screenshots for the app in this repo:
-![screenshot](screenshots/default_view.png)
-![screenshot2](screenshots/fashion_mnist_example.png)
+The following are screenshots for the demo app:
+![screenshot](screenshots/screenshot1.png)
+
+![screenshot2](screenshots/screenshot2.png)
+
+The following are screenshots for the full (local) app:
+![screenshot3](screenshots/default_view.png)
+
+![screenshot4](screenshots/fashion_mnist_example.png)
