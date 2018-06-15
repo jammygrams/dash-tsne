@@ -241,13 +241,7 @@ local_layout = html.Div([
 
     html.Div([
         dcc.Markdown('''
-**What is t-SNE?**
-
-t-distributed stochastic neighbor embedding, created by van der Maaten and Hinton in 2008, is a visualization algorithm that reduce a high-dimensional space (e.g. an image or a word embedding) into two or three dimensions, so we can visualize how the data is distributed. A classical example is MNIST, a dataset of 60,000 handwritten digits of size 28x28 in black and white. When you reduce the MNIST dataset using t-SNE, you can clearly see all the digit clustered together, with the exception of a few that might have been poorly written. [You can read a detailed explanation of the algorithm on van der Maaten's personal blog.](https://lvdmaaten.github.io/tsne/)
-
-**How to use the app**
-
-To train your own t-SNE, you can input your own high-dimensional dataset and the corresponding labels inside the upload fields. For convenience, small sample datasets are included inside the data folder. [You can also download them here](https://www.dropbox.com/sh/l79mcmlqil7w7so/AACfQhp7lUS90sZUedsqAzWOa?dl=0&lst=). The training can take a lot of time depending on the size of the dataset (the complete MNIST dataset could take 15-30 min), so it is **recommended to clone the repo and run the app locally if you want to use bigger datasets**. [You can find the repository containing this model here.](https://github.com/plotly/dash-tsne)
+To view the source code, please visit the [GitHub Repository](https://github.com/plotly/dash-tsne). To view pre-generated simulations of t-SNE, check out the [demo app](https://dash-tsne.herokuapp.com). 
 ''')],
         style={
             'margin-top': '15px'
