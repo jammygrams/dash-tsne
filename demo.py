@@ -309,7 +309,7 @@ def demo_callbacks(app):
 
     @app.server.before_first_request
     def load_image_data():
-        global data_dict, _figure
+        global data_dict
 
         data_dict = {
             'mnist_3000': pd.read_csv("data/mnist_3000_input.csv"),
@@ -317,7 +317,7 @@ def demo_callbacks(app):
             'cifar_gray_3000': pd.read_csv("data/cifar_gray_3000_input.csv"),
             'wikipedia_3000': pd.read_csv('data/wikipedia_3000.csv'),
             'crawler_3000': pd.read_csv('data/crawler_3000.csv'),
-            'twitter_3000': pd.read_csv('data/twitter_3000.csv', encoding = "ISO-8859-1")
+            'twitter_3000': pd.read_csv('data/twitter_3000.csv', encoding="ISO-8859-1")
         }
 
     @app.callback(Output('div-wordemb-controls', 'style'),
@@ -343,7 +343,6 @@ def demo_callbacks(app):
             return [{'label': i, 'value': i} for i in data_dict[dataset].iloc[:, 0].tolist()]
         else:
             return []
-
 
     @app.callback(Output('graph-3d-plot-tsne', 'figure'),
                   [Input('dropdown-dataset', 'value'),
