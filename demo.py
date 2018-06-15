@@ -374,7 +374,7 @@ def demo_callbacks(app):
             path = f'demo_embeddings/{dataset}/iterations_{iterations}/perplexity_{perplexity}/pca_{pca_dim}/learning_rate_{learning_rate}'
 
             try:
-                embedding_df = pd.read_csv(path + f'/data.csv', index_col=0)
+                embedding_df = pd.read_csv(path + f'/data.csv', index_col=0, encoding="ISO-8859-1")
 
             except FileNotFoundError as error:
                 print(error, "\nThe dataset was not found. Please generate it using generate_demo_embeddings.py")
@@ -437,7 +437,7 @@ def demo_callbacks(app):
             path = f'demo_embeddings/{dataset}/iterations_{iterations}/perplexity_{perplexity}/pca_{pca_dim}/learning_rate_{learning_rate}'
 
             try:
-                embedding_df = pd.read_csv(path + f'/data.csv')
+                embedding_df = pd.read_csv(path + f'/data.csv', encoding="ISO-8859-1")
 
             except FileNotFoundError as error:
                 print(error, "\nThe dataset was not found. Please generate it using generate_demo_embeddings.py")
