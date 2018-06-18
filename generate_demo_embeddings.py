@@ -35,10 +35,7 @@ def generate_embedding(dataset,
         data = pd.read_csv(f"data/{dataset}_input.csv")
         labels = pd.read_csv(f"data/{dataset}_labels.csv")
     elif mode == 'one_file':
-        if dataset == 'twitter_3000':
-            data = pd.read_csv(f'data/{dataset}.csv', index_col=0, encoding="ISO-8859-1")
-        else:
-            data = pd.read_csv(f'data/{dataset}.csv', index_col=0)
+        data = pd.read_csv(f'data/{dataset}.csv', index_col=0, encoding="ISO-8859-1")
         labels = data.index
 
     nb_col = data.shape[1]
