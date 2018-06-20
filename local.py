@@ -233,7 +233,19 @@ local_layout = html.Div([
                 }
             )
         ],
-            className="four columns"
+            className="four columns",
+            style={
+                'padding': 20,
+                'margin': 5,
+                'borderRadius': 5,
+                'border': 'thin lightgrey solid',
+
+                # Remove possibility to select the text for better UX
+                'user-select': 'none',
+                '-moz-user-select': 'none',
+                '-webkit-user-select': 'none',
+                '-ms-user-select': 'none'
+            }
         )
     ],
         className="row"
