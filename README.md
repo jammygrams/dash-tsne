@@ -29,6 +29,10 @@ which will create the csv file with the corresponding parameters. At the moment,
 
 ## Screenshots
 The following are screenshots for the demo app:
+![animated1](screenshots/animated1.gif)
+
+![animated2](screenshots/animated2.gif)
+
 ![screenshot](screenshots/screenshot1.png)
 
 ![screenshot2](screenshots/screenshot2.png)
