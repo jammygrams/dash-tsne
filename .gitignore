@@ -3,7 +3,7 @@
 *.xml
 mnist2500_labels.txt
 mnist2500_X.txt
-.ipynb_checkpoints/TSNE_MNIST_test-checkpoint.ipynb
+notebooks/.ipynb_checkpoints
 mnist_data.csv
 mnist_label.csv
 input_2000.csv
