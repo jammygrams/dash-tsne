@@ -11,3 +11,4 @@ input_750.csv
 input_data.csv
 data/cifar_3000*
 *.pyc
+dash-tsne-venv
