@@ -1,0 +1,59 @@
+.title {
+  font-family: "Times New Roman";
+  color: #6b6b6b;
+  float: left;
+  margin-top: 20px;
+  margin-bottom: 0;
+  margin-left: 7px;
+}
+
+.background {
+  background-color: #f2f3f5;
+  padding: 0 0;
+}
+
+.middle-column {
+  float: left;
+  padding: 10px;
+  width: 50%;
+  background-color: #eeebeb;
+}
+.side-column {
+  float: left;
+  padding: 10px;
+  width: 25%;
+  background-color: rgb(185, 79, 79);
+}
+
+#graph-3d-plot-tsne > div > div > svg:nth-child(1) {
+  background-color: rgb(49, 103, 193);
+}
+.rc-slider-track {
+  position: absolute;
+  left: 0;
+  height: 4px;
+  border-radius: 6px;
+  background-color: #516bf3;
+}
+.rc-slider-dot-active {
+  border-color: #516bf3;
+}
+
+.rc-slider-handle {
+  position: absolute;
+  margin-left: -7px;
+  margin-top: -5px;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  border-radius: 50%;
+  border: solid 2px #516bf3;
+  background-color: #fff;
+}
+.rc-slider-step {
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background: transparent;
+  border-color: #516bf3;
+}

@@ -15,12 +15,16 @@ import pandas as pd
 import plotly.graph_objs as go
 import scipy.spatial.distance as spatial_distance
 
+#  'cifar_gray_3000', 'fashion_3000'
 IMAGE_DATASETS = ('mnist_3000', 'cifar_gray_3000', 'fashion_3000')
 WORD_EMBEDDINGS = ('wikipedia_3000', 'twitter_3000', 'crawler_3000')
 
 
+with open('demo_intro.md', 'r') as file:
+    demo_intro_md = file.read()
+
 with open('demo_description.md', 'r') as file:
-    demo_md = file.read()
+    demo_description_md = file.read()
 
 
 def merge(a, b):
@@ -63,6 +67,8 @@ def Card(children, **kwargs):
     )
 
 
+##### CHANGE SLIDER COLOUR RIGHT HERE ######
+
 def NamedSlider(name, short, min, max, step, val, marks=None):
     if marks:
         step = None
@@ -97,6 +103,8 @@ def NamedInlineRadioItems(name, short, options, val, **kwargs):
                 options=options,
                 value=val,
                 labelStyle={
+                    ##### MAYBE CHANGE IT HERE ####
+                    # column not wide enough
                     'display': 'inline-block',
                     'margin-right': '7px',
                     'font-weight': 300
@@ -111,26 +119,39 @@ def NamedInlineRadioItems(name, short, options, val, **kwargs):
     )
 
 
+# title_layout = html.Div(className="row", children=[
+#     html.H2(
+#         't-SNE Explorer',
+#         className='title',
+#         id='app-title'
+#     ),
+#     html.Img(
+#         src="https://s3-us-west-1.amazonaws.com/plotly-tutorials/logo/new-branding/dash-logo-by-plotly-stripe.png",
+#         style={
+#             'height': '100px',
+#             'float': 'right'
+#         }
+#     )
+
+
+# ])
+
 demo_layout = html.Div(
-    className="container",
+    className="row",
     style={
         'width': '90%',
-        'max-width': 'none',
+        'max-width': '100%',
         'font-size': '1.5rem',
-        'padding': '10px 30px'
+        'padding': '10px 40px'
+
     },
     children=[
         # Header
         html.Div(className="row", children=[
             html.H2(
                 't-SNE Explorer',
-                id='title',
-                style={
-                    'float': 'left',
-                    'margin-top': '20px',
-                    'margin-bottom': '0',
-                    'margin-left': '7px'
-                }
+                className='title',
+                id='app-title'
             ),
 
             html.Img(
@@ -142,28 +163,37 @@ demo_layout = html.Div(
             )
         ]),
 
-        # Body
-        html.Div(className="row", children=[
-            html.Div(className="eight columns", children=[
-                dcc.Graph(
-                    id='graph-3d-plot-tsne',
-                    style={'height': '98vh'}
-                )
-            ]),
+        # Demo Description
+        html.Div(className='row, background', id="learn-more-button",
+                 children=[html.Div(
+                     #style={'width': '75%'},
+                     children=dcc.Markdown(demo_intro_md),
+                 ),
+                     html.Button('Learn More', id='button')
+                 ]),
 
-            html.Div(className="four columns", children=[
+        # Body
+        html.Div(className='row', children=[
+            # html.Div(className="eight columns", children=[
+            #     dcc.Graph(
+            #         id='graph-3d-plot-tsne',
+            #         style={'height': '98vh'}
+            #     )
+            # ]),
+
+            html.Div(className="three columns", children=[
                 Card([
                     dcc.Dropdown(
                         id='dropdown-dataset',
                         searchable=False,
                         options=[
-                            # TODO: Generate more data
-                            {'label': 'MNIST Digits', 'value': 'mnist_3000'},
-                            # {'label': 'Fashion MNIST', 'value': 'fashion_3000'},
-                            # {'label': 'CIFAR 10 (Grayscale)', 'value': 'cifar_gray_3000'},
-                            {'label': 'Twitter (GloVe)', 'value': 'twitter_3000'},
-                            {'label': 'Wikipedia (GloVe)', 'value': 'wikipedia_3000'},
-                            # {'label': 'Web Crawler (GloVe)', 'value': 'crawler_3000'},
+                            {'label': 'MNIST Digits',
+                             'value': 'mnist_3000'},
+                            {'label': 'Twitter (GloVe)',
+                             'value': 'twitter_3000'},
+                            {'label': 'Wikipedia (GloVe)',
+                             'value': 'wikipedia_3000'},
+                            # {'label': 'Web Crawler (GloVe)'},
                         ],
                         placeholder="Select a dataset"
                     ),
@@ -175,7 +205,10 @@ demo_layout = html.Div(
                         max=1000,
                         step=None,
                         val=500,
-                        marks={i: i for i in [250, 500, 750, 1000]}
+                        marks={i: i for i in [250, 500, 750, 1000]},
+                        # marks={i: {'label': i, 'style': {'color': 'rgb(49, 103, 193)'} for i in [250, 500, 750, 1000]}},
+                        # marks={str(h): {'label': str(h), 'style': {
+                        #     'color': 'rgb(49, 103, 193)'}} for h in [250, 500, 750, 1000]},
                     ),
 
                     NamedSlider(
@@ -213,12 +246,17 @@ demo_layout = html.Div(
                             name="Display Mode",
                             short="wordemb-display-mode",
                             options=[
+                                ########################################################
+                                ############# MAKE THEM ON THE SAME LINE ################
+                                # column width too small fix overall template first
                                 {'label': ' Regular', 'value': 'regular'},
-                                {'label': ' Top-100 Neighbors', 'value': 'neighbors'}
+                                {'label': ' Top-100 Neighbors',
+                                    'value': 'neighbors'}
                             ],
                             val='regular'),
 
-                        dcc.Dropdown(id='dropdown-word-selected', placeholder='Select word to display its neighbors')
+                        dcc.Dropdown(
+                            id='dropdown-word-selected', placeholder='Select word to display its neighbors')
                     ])
                 ]),
 
@@ -233,20 +271,14 @@ demo_layout = html.Div(
 
                     html.Div(id='div-plot-click-wordemb')
                 ])
-            ])
+            ]),
+            html.Div(className="eight columns", children=[
+                dcc.Graph(
+                    id='graph-3d-plot-tsne',
+                    style={'height': '98vh'}
+                )
+            ]),
         ]),
-
-        # Demo Description
-        html.Div(
-            className='row',
-            children=html.Div(
-                style={
-                    'width': '75%',
-                    'margin': '30px auto',
-                },
-                children=dcc.Markdown(demo_md)
-            )
-        )
     ]
 )
 
@@ -278,6 +310,7 @@ def demo_callbacks(app):
 
         return figure
 
+    # Scatter Plot of the t-SNE datasets
     def generate_figure_word_vec(embedding_df, layout, wordemb_display_mode, selected_word, dataset):
         # Regular displays the full scatter plot with only circles
         if wordemb_display_mode == 'regular':
@@ -293,6 +326,7 @@ def demo_callbacks(app):
             # Get the nearest neighbors indices using Euclidean distance
             vector = data_dict[dataset].set_index('0')
             selected_vec = vector.loc[selected_word]
+
             def compare_pd(vector):
                 return spatial_distance.euclidean(vector, selected_vec)
             distance_map = vector.apply(compare_pd, axis=1)
@@ -330,12 +364,32 @@ def demo_callbacks(app):
 
         data_dict = {
             'mnist_3000': pd.read_csv("data/mnist_3000_input.csv"),
+            'wikipedia_3000': pd.read_csv('data/wikipedia_3000.csv'),
+            'twitter_3000': pd.read_csv('data/twitter_3000.csv', encoding="ISO-8859-1"),
+
+            # these belong are not required
+            'crawler_3000': pd.read_csv('data/crawler_3000.csv'),
             'fashion_3000': pd.read_csv("data/fashion_3000_input.csv"),
             'cifar_gray_3000': pd.read_csv("data/cifar_gray_3000_input.csv"),
-            'wikipedia_3000': pd.read_csv('data/wikipedia_3000.csv'),
-            'crawler_3000': pd.read_csv('data/crawler_3000.csv'),
-            'twitter_3000': pd.read_csv('data/twitter_3000.csv', encoding="ISO-8859-1")
         }
+
+    # callback function for the learn-more-button
+    @app.callback(Output('learn-more-button', 'children'),
+                  [Input('learn-more-button', 'n_clicks')])
+    def learn_more(n_clicks):
+        # if clicked odd times, the insturctions will show; else (even times), only the header will show
+        if (n_clicks % 2) == 1:
+            return html.Div(children=[html.Div(
+                style={'width': '75%'},
+                children=dcc.Markdown(demo_intro_md)),
+                html.Div(children=dcc.Markdown(demo_description_md)),
+                html.Button('Close', id='button')
+            ])
+        else:
+            return html.Div(children=[html.Div(
+                style={'width': '75%'},
+                children=dcc.Markdown(demo_intro_md)),
+                html.Button('Learn More', id='button')])
 
     @app.callback(Output('div-wordemb-controls', 'style'),
                   [Input('dropdown-dataset', 'value')])
@@ -374,10 +428,12 @@ def demo_callbacks(app):
             path = f'demo_embeddings/{dataset}/iterations_{iterations}/perplexity_{perplexity}/pca_{pca_dim}/learning_rate_{learning_rate}'
 
             try:
-                embedding_df = pd.read_csv(path + f'/data.csv', index_col=0, encoding="ISO-8859-1")
+                embedding_df = pd.read_csv(
+                    path + f'/data.csv', index_col=0, encoding="ISO-8859-1")
 
             except FileNotFoundError as error:
-                print(error, "\nThe dataset was not found. Please generate it using generate_demo_embeddings.py")
+                print(
+                    error, "\nThe dataset was not found. Please generate it using generate_demo_embeddings.py")
                 return go.Figure()
 
             # Plot layout
@@ -437,16 +493,20 @@ def demo_callbacks(app):
             path = f'demo_embeddings/{dataset}/iterations_{iterations}/perplexity_{perplexity}/pca_{pca_dim}/learning_rate_{learning_rate}'
 
             try:
-                embedding_df = pd.read_csv(path + f'/data.csv', encoding="ISO-8859-1")
+                embedding_df = pd.read_csv(
+                    path + f'/data.csv', encoding="ISO-8859-1")
 
             except FileNotFoundError as error:
-                print(error, "\nThe dataset was not found. Please generate it using generate_demo_embeddings.py")
+                print(
+                    error, "\nThe dataset was not found. Please generate it using generate_demo_embeddings.py")
                 return
 
             # Convert the point clicked into float64 numpy array
-            click_point_np = np.array([clickData['points'][0][i] for i in ['x', 'y', 'z']]).astype(np.float64)
+            click_point_np = np.array([clickData['points'][0][i] for i in [
+                                      'x', 'y', 'z']]).astype(np.float64)
             # Create a boolean mask of the point clicked, truth value exists at only one row
-            bool_mask_click = embedding_df.loc[:, 'x':'z'].eq(click_point_np).all(axis=1)
+            bool_mask_click = embedding_df.loc[:, 'x':'z'].eq(
+                click_point_np).all(axis=1)
             # Retrieve the index of the point clicked, given it is present in the set
             if bool_mask_click.any():
                 clicked_idx = embedding_df[bool_mask_click].index[0]
@@ -454,9 +514,11 @@ def demo_callbacks(app):
                 # Retrieve the image corresponding to the index
                 image_vector = data_dict[dataset].iloc[clicked_idx]
                 if dataset == 'cifar_gray_3000':
-                    image_np = image_vector.values.reshape(32, 32).astype(np.float64)
+                    image_np = image_vector.values.reshape(
+                        32, 32).astype(np.float64)
                 else:
-                    image_np = image_vector.values.reshape(28, 28).astype(np.float64)
+                    image_np = image_vector.values.reshape(
+                        28, 28).astype(np.float64)
 
                 # Encode image into base 64
                 image_b64 = numpy_to_b64(image_np)
@@ -481,6 +543,7 @@ def demo_callbacks(app):
             # Get the nearest neighbors indices using Euclidean distance
             vector = data_dict[dataset].set_index('0')
             selected_vec = vector.loc[selected_word]
+
             def compare_pd(vector):
                 return spatial_distance.euclidean(vector, selected_vec)
             distance_map = vector.apply(compare_pd, axis=1)
@@ -532,4 +595,3 @@ def demo_callbacks(app):
                 return None
             else:
                 return "Click a word on the plot to see its top 5 neighbors."
-
