@@ -55,7 +55,7 @@ def Card(children, **kwargs):
             'padding': 20,
             'margin': 5,
             'borderRadius': 5,
-            'border': 'thin lightgrey solid',
+            # 'border': 'thin lightgrey solid',
 
             # Remove possibility to select the text for better UX
             'user-select': 'none',
@@ -66,8 +66,6 @@ def Card(children, **kwargs):
         **omit(['style'], kwargs)
     )
 
-
-##### CHANGE SLIDER COLOUR RIGHT HERE ######
 
 def NamedSlider(name, short, min, max, step, val, marks=None):
     if marks:
@@ -119,30 +117,12 @@ def NamedInlineRadioItems(name, short, options, val, **kwargs):
     )
 
 
-# title_layout = html.Div(className="row", children=[
-#     html.H2(
-#         't-SNE Explorer',
-#         className='title',
-#         id='app-title'
-#     ),
-#     html.Img(
-#         src="https://s3-us-west-1.amazonaws.com/plotly-tutorials/logo/new-branding/dash-logo-by-plotly-stripe.png",
-#         style={
-#             'height': '100px',
-#             'float': 'right'
-#         }
-#     )
-
-
-# ])
-
 demo_layout = html.Div(
     className="row",
     style={
-        'width': '90%',
         'max-width': '100%',
         'font-size': '1.5rem',
-        'padding': '10px 40px'
+        'padding': '10px 0px'
 
     },
     children=[
@@ -157,30 +137,25 @@ demo_layout = html.Div(
             html.Img(
                 src="https://s3-us-west-1.amazonaws.com/plotly-tutorials/logo/new-branding/dash-logo-by-plotly-stripe.png",
                 style={
-                    'height': '100px',
-                    'float': 'right'
+                    'height': '90px',
+                    'float': 'right',
+                    'margin-top': '10px',
+                    'margin-right': '30px'
                 }
             )
         ]),
 
         # Demo Description
-        html.Div(className='row, background', id="learn-more-button",
+        html.Div(className='row, background', id="learn-more-button", style={'padding': '5px 30px'},
                  children=[html.Div(
-                     #style={'width': '75%'},
+                     style={'width': '75%'},
                      children=dcc.Markdown(demo_intro_md),
                  ),
                      html.Button('Learn More', id='button')
-                 ]),
+        ]),
 
         # Body
-        html.Div(className='row', children=[
-            # html.Div(className="eight columns", children=[
-            #     dcc.Graph(
-            #         id='graph-3d-plot-tsne',
-            #         style={'height': '98vh'}
-            #     )
-            # ]),
-
+        html.Div(className='row background', style={'padding': '5px 30px'}, children=[
             html.Div(className="three columns", children=[
                 Card([
                     dcc.Dropdown(
@@ -206,9 +181,6 @@ demo_layout = html.Div(
                         step=None,
                         val=500,
                         marks={i: i for i in [250, 500, 750, 1000]},
-                        # marks={i: {'label': i, 'style': {'color': 'rgb(49, 103, 193)'} for i in [250, 500, 750, 1000]}},
-                        # marks={str(h): {'label': str(h), 'style': {
-                        #     'color': 'rgb(49, 103, 193)'}} for h in [250, 500, 750, 1000]},
                     ),
 
                     NamedSlider(
@@ -256,7 +228,7 @@ demo_layout = html.Div(
                             val='regular'),
 
                         dcc.Dropdown(
-                            id='dropdown-word-selected', placeholder='Select word to display its neighbors')
+                            id='dropdown-word-selected', placeholder='Select word to display its neighbors', style={'background-color': '#f2f3f5'})
                     ])
                 ]),
 
@@ -272,7 +244,7 @@ demo_layout = html.Div(
                     html.Div(id='div-plot-click-wordemb')
                 ])
             ]),
-            html.Div(className="eight columns", children=[
+            html.Div(className="seven columns", children=[
                 dcc.Graph(
                     id='graph-3d-plot-tsne',
                     style={'height': '98vh'}
@@ -346,7 +318,8 @@ def demo_callbacks(app):
             mode=plot_mode,
             marker=dict(
                 size=3,
-                color='#ED9C69',
+                # SCATTER PLOT COLOR
+                color='#516bf3',
                 symbol='circle'
             )
         )
@@ -367,7 +340,7 @@ def demo_callbacks(app):
             'wikipedia_3000': pd.read_csv('data/wikipedia_3000.csv'),
             'twitter_3000': pd.read_csv('data/twitter_3000.csv', encoding="ISO-8859-1"),
 
-            # these belong are not required
+            # these are for the local app to generate uploaded datasets
             'crawler_3000': pd.read_csv('data/crawler_3000.csv'),
             'fashion_3000': pd.read_csv("data/fashion_3000_input.csv"),
             'cifar_gray_3000': pd.read_csv("data/cifar_gray_3000_input.csv"),
