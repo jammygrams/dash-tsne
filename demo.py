@@ -55,7 +55,6 @@ def Card(children, **kwargs):
             'padding': 20,
             'margin': 5,
             'borderRadius': 5,
-            # 'border': 'thin lightgrey solid',
 
             # Remove possibility to select the text for better UX
             'user-select': 'none',
@@ -122,7 +121,7 @@ demo_layout = html.Div(
     style={
         'max-width': '100%',
         'font-size': '1.5rem',
-        'padding': '10px 0px'
+        'padding': '0px 0px'
 
     },
     children=[
@@ -146,7 +145,7 @@ demo_layout = html.Div(
         ]),
 
         # Demo Description
-        html.Div(className='row, background', id="learn-more-button", style={'padding': '5px 30px'},
+        html.Div(className='row, background', id="learn-more-button", style={'padding': '5px 45px'},
                  children=[html.Div(
                      style={'width': '75%'},
                      children=dcc.Markdown(demo_intro_md),
@@ -155,7 +154,7 @@ demo_layout = html.Div(
         ]),
 
         # Body
-        html.Div(className='row background', style={'padding': '5px 30px'}, children=[
+        html.Div(className='row background', style={'padding': '10px'}, children=[
             html.Div(className="three columns", children=[
                 Card([
                     dcc.Dropdown(
@@ -231,24 +230,26 @@ demo_layout = html.Div(
                             id='dropdown-word-selected', placeholder='Select word to display its neighbors', style={'background-color': '#f2f3f5'})
                     ])
                 ]),
-
-                Card(style={'padding': '5px'}, children=[
-                    html.Div(id='div-plot-click-message',
-                             style={'text-align': 'center',
-                                    'margin-bottom': '7px',
-                                    'font-weight': 'bold'}
-                             ),
-
-                    html.Div(id='div-plot-click-image'),
-
-                    html.Div(id='div-plot-click-wordemb')
-                ])
             ]),
-            html.Div(className="seven columns", children=[
+            html.Div(className="six columns", children=[
                 dcc.Graph(
                     id='graph-3d-plot-tsne',
                     style={'height': '98vh'}
                 )
+            ]),
+            html.Div(className="three columns", children=[
+                Card(style={'padding': '5px'}, children=[
+                     html.Div(id='div-plot-click-message',
+                              style={'text-align': 'center',
+                                     'margin-bottom': '7px',
+                                     'font-weight': 'bold'}
+                              ),
+
+                     html.Div(id='div-plot-click-image'),
+
+                     html.Div(id='div-plot-click-wordemb')
+                     ])
+
             ]),
         ]),
     ]
@@ -526,7 +527,8 @@ def demo_callbacks(app):
                 x=nearest_neighbors.values,
                 y=nearest_neighbors.index,
                 width=0.5,
-                orientation='h'
+                orientation='h',
+                marker=dict(color='rgb(81, 107, 243)')
             )
 
             layout = go.Layout(

@@ -60,8 +60,32 @@
 }
 
 #graph-3d-plot-tsne > div > div > svg:nth-child(1) {
-  background-color: #f2f3f5;
+  background-color: #f2f3f5 !important;
 }
+
+#graph-3d-plot-tsne > div > div > svg:nth-child(1) > g.bglayer > rect {
+  fill: #f2f3f5 !important;
+}
+
+#graph-bar-nearest-neighbors-word > div > div > svg:nth-child(1) {
+  background-color: #f2f3f5 !important;
+}
+#graph-3d-plot-tsne > div > div > div.modebar.modebar--hover {
+  background: #f2f3f5 !important;
+}
+#graph-bar-nearest-neighbors-word
+  > div
+  > div
+  > svg:nth-child(1)
+  > g.bglayer
+  > rect {
+  fill: #f2f3f5 !important;
+}
+
+/*
+svg.main-svg {
+  background-color: #f2f3f5;
+}*/
 
 #graph-3d-plot-tsne > div > div > svg:nth-child(1) > g.bglayer > rect {
   fill: #f2f3f5;
