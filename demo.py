@@ -101,8 +101,7 @@ def NamedInlineRadioItems(name, short, options, val, **kwargs):
                 value=val,
                 labelStyle={
                     'display': 'inline-block',
-                    'margin-right': '7px',
-                    'font-weight': 300
+                    'margin-right': '7px'
                 },
                 style={
                     'display': 'inline-block',
@@ -314,7 +313,6 @@ def demo_callbacks(app):
             mode=plot_mode,
             marker=dict(
                 size=3,
-                # SCATTER PLOT COLOR
                 color='#3266c1',
                 symbol='circle'
             )
@@ -529,7 +527,7 @@ def demo_callbacks(app):
             layout = go.Layout(
                 title=f'5 nearest neighbors of "{selected_word}"',
                 xaxis=dict(title='Euclidean Distance'),
-                margin=go.Margin(l=60, r=60, t=35, b=35)
+                margin=go.Margin(l=60, r=60, t=35, b=35),
             )
 
             fig = go.Figure(data=[trace], layout=layout)
