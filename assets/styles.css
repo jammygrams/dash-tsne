@@ -53,6 +53,9 @@
   overflow: hidden;
 }
 
+#learn-more-button > div > div:nth-child(2) > div > p:nth-child(11) > img {
+  width: 40%;
+}
 #graph-3d-plot-tsne > div > div > svg:nth-child(1) {
   background-color: #f2f3f4 !important;
 }
