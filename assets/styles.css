@@ -2,14 +2,14 @@
 
 .title {
   font-family: "Times New Roman";
-  color: #6b6b6b;
+  color: #6c7182;
   float: left;
   margin-top: 20px;
   margin-left: 30px;
 }
 
 .background {
-  background-color: #f2f3f5;
+  background-color: #f2f3f4;
   padding: 0 0;
 }
 
@@ -18,10 +18,10 @@
   left: 0;
   height: 4px;
   border-radius: 6px;
-  background-color: #516bf3;
+  background-color: #3266c1;
 }
 .rc-slider-dot-active {
-  border-color: #516bf3;
+  border-color: #3266c1;
 }
 
 .rc-slider-handle {
@@ -32,7 +32,7 @@
   height: 14px;
   cursor: pointer;
   border-radius: 50%;
-  border: solid 2px #516bf3;
+  border: solid 2px #3266c1;
   background-color: #fff;
 }
 .rc-slider-step {
@@ -40,18 +40,12 @@
   width: 100%;
   height: 4px;
   background: transparent;
-  border-color: #516bf3;
+  border-color: #3266c1;
 }
 
-/*#dropdown-dataset > div > div.Select-control.background {
-  background-color: #f2f3f5;
-}*/
-
 .Select-control {
-  background-color: #f2f3f5;
+  background-color: #f2f3f4;
   border-radius: 4px;
-  border: 1px solid #ccc;
-  color: #333;
   display: table;
   border-spacing: 0;
   border-collapse: separate;
@@ -60,18 +54,18 @@
 }
 
 #graph-3d-plot-tsne > div > div > svg:nth-child(1) {
-  background-color: #f2f3f5 !important;
+  background-color: #f2f3f4 !important;
 }
 
 #graph-3d-plot-tsne > div > div > svg:nth-child(1) > g.bglayer > rect {
-  fill: #f2f3f5 !important;
+  fill: #f2f3f4 !important;
 }
 
 #graph-bar-nearest-neighbors-word > div > div > svg:nth-child(1) {
-  background-color: #f2f3f5 !important;
+  background-color: #f2f3f4 !important;
 }
 #graph-3d-plot-tsne > div > div > div.modebar.modebar--hover {
-  background: #f2f3f5 !important;
+  background: #f2f3f4 !important;
 }
 #graph-bar-nearest-neighbors-word
   > div
@@ -79,16 +73,35 @@
   > svg:nth-child(1)
   > g.bglayer
   > rect {
-  fill: #f2f3f5 !important;
+  fill: #f2f3f4 !important;
 }
 
-/*
-svg.main-svg {
-  background-color: #f2f3f5;
-}*/
-
 #graph-3d-plot-tsne > div > div > svg:nth-child(1) > g.bglayer > rect {
-  fill: #f2f3f5;
+  fill: #f2f3f4;
   fill-opacity: 1;
   stroke-width: 0;
+}
+
+#react-select-2--value-item {
+  color: #6c7182;
+}
+
+body {
+  font-size: 1.5em; /* currently ems cause chrome bug misinterpreting rems on body element */
+  line-height: 1.6;
+  font-weight: 400;
+  font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial,
+    sans-serif;
+  color: #6c7182;
+}
+
+#graph-3d-plot-tsne
+  > div
+  > div
+  > svg:nth-child(3)
+  > g.infolayer
+  > g.legend
+  > rect.bg {
+  stroke: #6c7182 !important;
+  fill: #f2f3f4 !important;
 }

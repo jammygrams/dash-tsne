@@ -100,8 +100,6 @@ def NamedInlineRadioItems(name, short, options, val, **kwargs):
                 options=options,
                 value=val,
                 labelStyle={
-                    ##### MAYBE CHANGE IT HERE ####
-                    # column not wide enough
                     'display': 'inline-block',
                     'margin-right': '7px',
                     'font-weight': 300
@@ -217,9 +215,6 @@ demo_layout = html.Div(
                             name="Display Mode",
                             short="wordemb-display-mode",
                             options=[
-                                ########################################################
-                                ############# MAKE THEM ON THE SAME LINE ################
-                                # column width too small fix overall template first
                                 {'label': ' Regular', 'value': 'regular'},
                                 {'label': ' Top-100 Neighbors',
                                     'value': 'neighbors'}
@@ -227,7 +222,7 @@ demo_layout = html.Div(
                             val='regular'),
 
                         dcc.Dropdown(
-                            id='dropdown-word-selected', placeholder='Select word to display its neighbors', style={'background-color': '#f2f3f5'})
+                            id='dropdown-word-selected', placeholder='Select word to display its neighbors', style={'background-color': '#f2f3f4'})
                     ])
                 ]),
             ]),
@@ -320,7 +315,7 @@ def demo_callbacks(app):
             marker=dict(
                 size=3,
                 # SCATTER PLOT COLOR
-                color='#516bf3',
+                color='#3266c1',
                 symbol='circle'
             )
         )
@@ -528,7 +523,7 @@ def demo_callbacks(app):
                 y=nearest_neighbors.index,
                 width=0.5,
                 orientation='h',
-                marker=dict(color='rgb(81, 107, 243)')
+                marker=dict(color='rgb(50, 102, 193)')
             )
 
             layout = go.Layout(
