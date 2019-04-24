@@ -4,9 +4,10 @@ from sklearn.manifold import TSNE
 import numpy as np
 import pandas as pd
 
-datasets = ["wikipedia_3000", "twitter_3000", "crawler_3000"]
-iterations_ls = [250, 500, 750, 1000]
-perplexity_ls = [3, 10, 30, 50, 100]
+# datasets = ["wikipedia_3000", "twitter_3000", "crawler_3000"]
+datasets = ["tfidf"]
+iterations_ls = [250, 500]
+perplexity_ls = [3, 10, 30]
 pca_dim_ls = [25, 50, 100]
 learning_rate_ls = [10, 50, 100, 200]
 
@@ -70,4 +71,4 @@ for dataset in datasets:
                                        perplexity,
                                        pca_dim,
                                        learning_rate,
-                                       mode='one_file')
+                                       mode='two_files')

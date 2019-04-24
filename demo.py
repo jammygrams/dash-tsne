@@ -16,7 +16,7 @@ import plotly.graph_objs as go
 import scipy.spatial.distance as spatial_distance
 
 IMAGE_DATASETS = ('mnist_3000', 'cifar_gray_3000', 'fashion_3000')
-WORD_EMBEDDINGS = ('wikipedia_3000', 'twitter_3000', 'crawler_3000')
+WORD_EMBEDDINGS = ('tfidf', 'wikipedia_3000')
 
 
 with open('demo_description.md', 'r') as file:
@@ -161,8 +161,9 @@ demo_layout = html.Div(
                             {'label': 'MNIST Digits', 'value': 'mnist_3000'},
                             # {'label': 'Fashion MNIST', 'value': 'fashion_3000'},
                             # {'label': 'CIFAR 10 (Grayscale)', 'value': 'cifar_gray_3000'},
-                            {'label': 'Twitter (GloVe)', 'value': 'twitter_3000'},
-                            {'label': 'Wikipedia (GloVe)', 'value': 'wikipedia_3000'},
+                            # {'label': 'Twitter (GloVe)', 'value': 'twitter_3000'},
+                            # {'label': 'Wikipedia (GloVe)', 'value': 'wikipedia_3000'},
+                            {'label': 'TFIDF', 'value': 'tfidf'},
                             # {'label': 'Web Crawler (GloVe)', 'value': 'crawler_3000'},
                         ],
                         placeholder="Select a dataset"
@@ -175,7 +176,7 @@ demo_layout = html.Div(
                         max=1000,
                         step=None,
                         val=500,
-                        marks={i: i for i in [250, 500, 750, 1000]}
+                        marks={i: i for i in [250, 500]}
                     ),
 
                     NamedSlider(
@@ -185,7 +186,7 @@ demo_layout = html.Div(
                         max=100,
                         step=None,
                         val=30,
-                        marks={i: i for i in [3, 10, 30, 50, 100]}
+                        marks={i: i for i in [3, 10, 30]}
                     ),
 
                     NamedSlider(
@@ -334,7 +335,8 @@ def demo_callbacks(app):
             'cifar_gray_3000': pd.read_csv("data/cifar_gray_3000_input.csv"),
             'wikipedia_3000': pd.read_csv('data/wikipedia_3000.csv'),
             'crawler_3000': pd.read_csv('data/crawler_3000.csv'),
-            'twitter_3000': pd.read_csv('data/twitter_3000.csv', encoding="ISO-8859-1")
+            'twitter_3000': pd.read_csv('data/twitter_3000.csv', encoding="ISO-8859-1"),
+            'tfidf': pd.read_csv('data/tfidf_input.csv'),
         }
 
     @app.callback(Output('div-wordemb-controls', 'style'),
