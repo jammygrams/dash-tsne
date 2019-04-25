@@ -18,7 +18,7 @@ import plotly.graph_objs as go
 import scipy.spatial.distance as spatial_distance
 
 from config import iterations_ls, perplexity_ls, pca_dim_ls, learning_rate_ls
-DATASETS = ('doc2vec', 'tfidf')
+DATASETS = ('doc2vec', 'tfidf', 'bert_250_word_mean')
 
 with open('demo_description.md', 'r') as file:
     demo_md = file.read()
@@ -150,7 +150,7 @@ demo_layout = html.Div(
                             # {'label': 'Fashion MNIST', 'value': 'fashion_3000'},
                             # {'label': 'CIFAR 10 (Grayscale)', 'value': 'cifar_gray_3000'},
                             # {'label': 'Twitter (GloVe)', 'value': 'twitter_3000'},
-                            # {'label': 'Wikipedia (GloVe)', 'value': 'wikipedia_3000'},
+                            {'label': 'BERT Word Mean (768 dimensions)', 'value': 'bert_250_word_mean'},
                             {'label': 'TFIDF (SVD 200 dimensions)', 'value': 'tfidf'},
                             {'label': 'Doc2Vec (200 dimensions)', 'value': 'doc2vec'},
                         ],
@@ -282,7 +282,8 @@ def demo_callbacks(app):
             # 'twitter_3000': pd.read_csv('data/twitter_3000.csv', encoding="ISO-8859-1"),
             # TODO: clean up below
             'tfidf': pd.read_pickle('data/source_text.pkl'),
-            'doc2vec': pd.read_pickle('data/source_text.pkl')
+            'doc2vec': pd.read_pickle('data/source_text.pkl'),
+            'bert_word_mean': pd.read_pickle('data/source_text.pkl')
         }
 
 
