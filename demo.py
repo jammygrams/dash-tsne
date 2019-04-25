@@ -15,7 +15,6 @@ from io import BytesIO
 from dash.dependencies import Input, Output, State
 import pandas as pd
 import plotly.graph_objs as go
-import scipy.spatial.distance as spatial_distance
 
 from config import iterations_ls, perplexity_ls, pca_dim_ls, learning_rate_ls
 DATASETS = ('doc2vec', 'tfidf', 'bert_250_word_mean')
@@ -283,7 +282,7 @@ def demo_callbacks(app):
             # TODO: clean up below
             'tfidf': pd.read_pickle('data/source_text.pkl'),
             'doc2vec': pd.read_pickle('data/source_text.pkl'),
-            'bert_word_mean': pd.read_pickle('data/source_text.pkl')
+            'bert_250_word_mean': pd.read_pickle('data/source_text.pkl')
         }
 
 

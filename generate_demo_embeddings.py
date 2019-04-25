@@ -1,7 +1,7 @@
 import os
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
-import bhtsne
+# import bhtsne
 import numpy as np
 import pandas as pd
 
