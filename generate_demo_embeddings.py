@@ -1,15 +1,12 @@
 import os
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
+# import bhtsne
 import numpy as np
 import pandas as pd
 
-datasets = ["wikipedia_3000", "twitter_3000", "crawler_3000"]
-iterations_ls = [250, 500, 750, 1000]
-perplexity_ls = [3, 10, 30, 50, 100]
-pca_dim_ls = [25, 50, 100]
-learning_rate_ls = [10, 50, 100, 200]
-
+from config import iterations_ls, perplexity_ls, pca_dim_ls, learning_rate_ls
+datasets = ["tfidf","doc2vec","bert_250_word_mean"]
 
 def generate_embedding(dataset,
                        iterations,
@@ -40,8 +37,9 @@ def generate_embedding(dataset,
 
     nb_col = data.shape[1]
 
-    pca = PCA(n_components=min(nb_col, pca_dim))
-    data_pca = pca.fit_transform(data.values)
+    if pca_dim is not 'none':
+        pca = PCA(n_components=min(nb_col, pca_dim))
+        data = pca.fit_transform(data.values)
 
     tsne = TSNE(n_components=3,
                 n_iter=iterations,
@@ -49,7 +47,9 @@ def generate_embedding(dataset,
                 perplexity=perplexity,
                 random_state=1131)
 
-    embedding = tsne.fit_transform(data_pca)
+    embedding = tsne.fit_transform(data)
+
+    # embedding = bhtsne.tsne(data, dimensions=3, perplexity=perplexity)
 
     embedding_df = pd.DataFrame(embedding, columns=['x', 'y', 'z'])
 
@@ -70,4 +70,4 @@ for dataset in datasets:
                                        perplexity,
                                        pca_dim,
                                        learning_rate,
-                                       mode='one_file')
+                                       mode='two_files')

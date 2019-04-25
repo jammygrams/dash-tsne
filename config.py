@@ -1,5 +1,12 @@
 import os
 
+# Config for tsne runs
+iterations_ls = [250, 375, 500, 1000]
+perplexity_ls = [3, 30, 50, 100]
+pca_dim_ls = [25, 100, 'none']
+learning_rate_ls = [100]
+
+
 # Replace with the name of your Dash app
 # This will end up being part of the URL of your deployed app,
 # so it can't contain any spaces, capitalizations, or special characters
