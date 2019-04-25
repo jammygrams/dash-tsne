@@ -17,9 +17,8 @@ import pandas as pd
 import plotly.graph_objs as go
 import scipy.spatial.distance as spatial_distance
 
-IMAGE_DATASETS = ('mnist_3000', 'cifar_gray_3000', 'fashion_3000', 'tfidf')
-WORD_EMBEDDINGS = ('wikipedia_3000', 'twitter_3000')
-
+from config import iterations_ls, perplexity_ls, pca_dim_ls, learning_rate_ls
+DATASETS = ('doc2vec', 'tfidf')
 
 with open('demo_description.md', 'r') as file:
     demo_md = file.read()
@@ -31,19 +30,6 @@ def merge(a, b):
 
 def omit(omitted_keys, d):
     return {k: v for k, v in d.items() if k not in omitted_keys}
-
-
-def numpy_to_b64(array, scalar=True):
-    # Convert from 0-1 to 0-255
-    if scalar:
-        array = np.uint8(255 * array)
-
-    im_pil = Image.fromarray(array)
-    buff = BytesIO()
-    im_pil.save(buff, format="png")
-    im_b64 = base64.b64encode(buff.getvalue()).decode("utf-8")
-
-    return im_b64
 
 
 def Card(children, **kwargs):
@@ -160,13 +146,13 @@ demo_layout = html.Div(
                         searchable=False,
                         options=[
                             # TODO: Generate more data
-                            {'label': 'MNIST Digits', 'value': 'mnist_3000'},
+                            # {'label': 'MNIST Digits', 'value': 'mnist_3000'},
                             # {'label': 'Fashion MNIST', 'value': 'fashion_3000'},
                             # {'label': 'CIFAR 10 (Grayscale)', 'value': 'cifar_gray_3000'},
                             # {'label': 'Twitter (GloVe)', 'value': 'twitter_3000'},
                             # {'label': 'Wikipedia (GloVe)', 'value': 'wikipedia_3000'},
-                            {'label': 'TFIDF', 'value': 'tfidf'},
-                            # {'label': 'Web Crawler (GloVe)', 'value': 'crawler_3000'},
+                            {'label': 'TFIDF (SVD 200 dimensions)', 'value': 'tfidf'},
+                            {'label': 'Doc2Vec (200 dimensions)', 'value': 'doc2vec'},
                         ],
                         placeholder="Select a dataset"
                     ),
@@ -178,7 +164,7 @@ demo_layout = html.Div(
                         max=1000,
                         step=None,
                         val=500,
-                        marks={i: i for i in [250, 500]}
+                        marks={i: i for i in iterations_ls}
                     ),
 
                     NamedSlider(
@@ -188,17 +174,18 @@ demo_layout = html.Div(
                         max=100,
                         step=None,
                         val=30,
-                        marks={i: i for i in [3, 10, 30, 50, 100]}
+                        marks={i: i for i in perplexity_ls}
                     ),
 
                     NamedSlider(
                         name="Initial PCA Dimensions",
                         short="pca-dimension",
                         min=25,
-                        max=100,
+                        max=200,
                         step=None,
-                        val=50,
-                        marks={i: i for i in [25, 50, 100]}
+                        val=100,
+                        # If 'no_pca', set on slider at value 200
+                        marks={(200 if i is 'none' else i): i for i in pca_dim_ls}
                     ),
 
                     NamedSlider(
@@ -208,7 +195,7 @@ demo_layout = html.Div(
                         max=200,
                         step=None,
                         val=100,
-                        marks={i: i for i in [10, 50, 100, 200]}
+                        marks={i: i for i in learning_rate_ls}
                     ),
 
                     html.Div(id='div-wordemb-controls', style={'display': 'none'}, children=[
@@ -293,9 +280,11 @@ def demo_callbacks(app):
             # 'wikipedia_3000': pd.read_csv('data/wikipedia_3000.csv'),
             # 'crawler_3000': pd.read_csv('data/crawler_3000.csv'),
             # 'twitter_3000': pd.read_csv('data/twitter_3000.csv', encoding="ISO-8859-1"),
+            # TODO: clean up below
             'tfidf': pd.read_pickle('data/source_text.pkl'),
+            'doc2vec': pd.read_pickle('data/source_text.pkl')
         }
-        
+
 
     @app.callback(Output('graph-3d-plot-tsne', 'figure'),
                   [Input('dropdown-dataset', 'value'),
@@ -307,6 +296,9 @@ def demo_callbacks(app):
                    Input('radio-wordemb-display-mode', 'value')])
     def display_3d_scatter_plot(dataset, iterations, perplexity, pca_dim, learning_rate, selected_word, wordemb_display_mode):
         if dataset:
+            # no_pca value is set as 200 above TODO: clean up?
+            if pca_dim == 200:
+                pca_dim = 'none'
             path = f'demo_embeddings/{dataset}/iterations_{iterations}/perplexity_{perplexity}/pca_{pca_dim}/learning_rate_{learning_rate}'
 
             try:
@@ -334,7 +326,7 @@ def demo_callbacks(app):
             )
 
             # For Image datasets
-            if dataset in IMAGE_DATASETS:
+            if dataset in DATASETS:
                 embedding_df['label'] = embedding_df.index
 
                 groups = embedding_df.groupby('label')
@@ -360,6 +352,9 @@ def demo_callbacks(app):
                             pca_dim,
                             learning_rate):
         if clickData:
+            # no pca value is set as 200 above TODO: clean up?
+            if pca_dim == 200:
+                pca_dim = 'none'
             # Load the same dataset as the one displayed
             path = f'demo_embeddings/{dataset}/iterations_{iterations}/perplexity_{perplexity}/pca_{pca_dim}/learning_rate_{learning_rate}'
 
