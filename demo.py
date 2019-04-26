@@ -17,6 +17,10 @@ import pandas as pd
 import plotly.graph_objs as go
 
 from config import iterations_ls, perplexity_ls, pca_dim_ls, learning_rate_ls
+
+# Create dict for slider key - if no pca, set key as 'none' slider at value 200
+pca_dim_dict = {(200 if i is 'none' else i): i for i in pca_dim_ls}
+
 DATASETS = ('doc2vec', 'tfidf', 'bert_250_word_mean')
 
 with open('demo_description.md', 'r') as file:
@@ -144,14 +148,9 @@ demo_layout = html.Div(
                         id='dropdown-dataset',
                         searchable=False,
                         options=[
-                            # TODO: Generate more data
-                            # {'label': 'MNIST Digits', 'value': 'mnist_3000'},
-                            # {'label': 'Fashion MNIST', 'value': 'fashion_3000'},
-                            # {'label': 'CIFAR 10 (Grayscale)', 'value': 'cifar_gray_3000'},
-                            # {'label': 'Twitter (GloVe)', 'value': 'twitter_3000'},
-                            {'label': 'BERT Word Mean (768 dimensions)', 'value': 'bert_250_word_mean'},
-                            {'label': 'TFIDF (SVD 200 dimensions)', 'value': 'tfidf'},
-                            {'label': 'Doc2Vec (200 dimensions)', 'value': 'doc2vec'},
+                            {'label': 'BERT 250 Word Embedding Mean (768 dimensions)', 'value': 'bert_250_word_mean'},
+                            {'label': 'TFIDF (SVD to 200 dimensions)', 'value': 'tfidf'},
+                            {'label': 'Doc2Vec (200 dimensions)', 'value': 'doc2vec'}
                         ],
                         placeholder="Select a dataset"
                     ),
@@ -183,8 +182,7 @@ demo_layout = html.Div(
                         max=200,
                         step=None,
                         val=100,
-                        # If 'no_pca', set on slider at value 200
-                        marks={(200 if i is 'none' else i): i for i in pca_dim_ls}
+                        marks=pca_dim_dict
                     ),
 
                     NamedSlider(
@@ -269,21 +267,10 @@ def demo_callbacks(app):
 
 
     @app.server.before_first_request
-    def load_image_data():
-        global data_dict
-
-        data_dict = {
-            # 'mnist_3000': pd.read_csv("data/mnist_3000_input.csv"),
-            # 'fashion_3000': pd.read_csv("data/fashion_3000_input.csv"),
-            # 'cifar_gray_3000': pd.read_csv("data/cifar_gray_3000_input.csv"),
-            # 'wikipedia_3000': pd.read_csv('data/wikipedia_3000.csv'),
-            # 'crawler_3000': pd.read_csv('data/crawler_3000.csv'),
-            # 'twitter_3000': pd.read_csv('data/twitter_3000.csv', encoding="ISO-8859-1"),
-            # TODO: clean up below
-            'tfidf': pd.read_pickle('data/source_text.pkl'),
-            'doc2vec': pd.read_pickle('data/source_text.pkl'),
-            'bert_250_word_mean': pd.read_pickle('data/source_text.pkl')
-        }
+    def load_source_text():
+        global source_text_df
+        # formerly known as 'data_dict'
+        source_text_df = pd.read_pickle('data/source_text.pkl')
 
 
     @app.callback(Output('graph-3d-plot-tsne', 'figure'),
@@ -296,16 +283,16 @@ def demo_callbacks(app):
                    Input('radio-wordemb-display-mode', 'value')])
     def display_3d_scatter_plot(dataset, iterations, perplexity, pca_dim, learning_rate, selected_word, wordemb_display_mode):
         if dataset:
-            # no_pca value is set as 200 above TODO: clean up?
-            if pca_dim == 200:
-                pca_dim = 'none'
-            path = f'demo_embeddings/{dataset}/iterations_{iterations}/perplexity_{perplexity}/pca_{pca_dim}/learning_rate_{learning_rate}'
+            # get value for pca key (to handle case where pca value is 'none')
+            pca_dim = pca_dim_dict[pca_dim]
+
+            path = f'tsne_vectors/{dataset}/iterations_{iterations}/perplexity_{perplexity}/pca_{pca_dim}/learning_rate_{learning_rate}'
 
             try:
                 embedding_df = pd.read_csv(path + f'/data.csv', index_col=0, encoding="ISO-8859-1")
 
             except FileNotFoundError as error:
-                print(error, "\nThe dataset was not found. Please generate it using generate_demo_embeddings.py")
+                print(error, "\nThe dataset was not found. Please generate it using generate_tsne_vectors.py")
                 return go.Figure()
 
             # Plot layout
@@ -352,17 +339,16 @@ def demo_callbacks(app):
                             pca_dim,
                             learning_rate):
         if clickData:
-            # no pca value is set as 200 above TODO: clean up?
-            if pca_dim == 200:
-                pca_dim = 'none'
+            # get value for pca key (to handle case where pca value is 'none')
+            pca_dim = pca_dim_dict[pca_dim]
             # Load the same dataset as the one displayed
-            path = f'demo_embeddings/{dataset}/iterations_{iterations}/perplexity_{perplexity}/pca_{pca_dim}/learning_rate_{learning_rate}'
+            path = f'tsne_vectors/{dataset}/iterations_{iterations}/perplexity_{perplexity}/pca_{pca_dim}/learning_rate_{learning_rate}'
 
             try:
                 embedding_df = pd.read_csv(path + f'/data.csv', encoding="ISO-8859-1")
 
             except FileNotFoundError as error:
-                print(error, "\nThe dataset was not found. Please generate it using generate_demo_embeddings.py")
+                print(error, "\nThe dataset was not found. Please generate it using generate_tsne_vectors.py")
                 return
 
             # Convert the point clicked into float64 numpy array
@@ -374,7 +360,7 @@ def demo_callbacks(app):
                 clicked_idx = embedding_df[bool_mask_click].index[0]
 
                 # Retrieve text corresponding to index
-                text = data_dict[dataset].iloc[clicked_idx].values[0]
+                text = source_text_df.iloc[clicked_idx].values[0]
 
                 return dcc.Markdown(text)
 
