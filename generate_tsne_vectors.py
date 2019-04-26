@@ -15,7 +15,7 @@ def generate_embedding(dataset,
                        learning_rate,
                        verbose=1,
                        mode='two_files'):
-    path = f'demo_embeddings/{dataset}/iterations_{iterations}/perplexity_{perplexity}/pca_{pca_dim}/learning_rate_{learning_rate}'
+    path = f'tsne_vectors/{dataset}/iterations_{iterations}/perplexity_{perplexity}/pca_{pca_dim}/learning_rate_{learning_rate}'
 
     def display(string):
         if verbose:

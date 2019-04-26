@@ -5,13 +5,6 @@
 .ipynb_checkpoints/
 notebooks/.ipynb_checkpoints
 .DS_Store
-# mnist2500_labels.txt
-# mnist2500_X.txt
-# mnist_data.csv
-# mnist_label.csv
-# input_2000.csv
-# input_750.csv
-# input_data.csv
 demo_embeddings/cifar_gray_3000
 demo_embeddings/crawler_3000
 demo_embeddings/fashion_3000
@@ -19,5 +12,6 @@ demo_embeddings/mnist_3000
 demo_embeddings/twitter_3000
 demo_embeddings/wikipedia_3000
 demo_embeddings/bert_word_mean
+data/*.csv
 *.pyc
 dash-tsne-venv
