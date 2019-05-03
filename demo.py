@@ -114,7 +114,7 @@ demo_layout = html.Div(
         # Header
         html.Div(className="row", children=[
             html.H2(
-                't-SNE Explorer',
+                '20 Newsgroups t-SNE Explorer',
                 id='title',
                 style={
                     'float': 'left',
@@ -148,11 +148,11 @@ demo_layout = html.Div(
                         id='dropdown-dataset',
                         searchable=False,
                         options=[
-                            {'label': 'BERT 250 Word Embedding Mean (768 dimensions)', 'value': 'bert_250_word_mean'},
                             {'label': 'TFIDF (SVD to 200 dimensions)', 'value': 'tfidf'},
-                            {'label': 'Doc2Vec (200 dimensions)', 'value': 'doc2vec'}
+                            {'label': 'Doc2Vec (200 dimensions)', 'value': 'doc2vec'},
+                            {'label': 'BERT 250 Word Embedding Mean (768 dimensions)', 'value': 'bert_250_word_mean'}
                         ],
-                        placeholder="Select a dataset"
+                        placeholder="Select a document embedding"
                     ),
 
                     NamedSlider(
@@ -332,7 +332,7 @@ def demo_callbacks(app):
                    Input('slider-perplexity', 'value'),
                    Input('slider-pca-dimension', 'value'),
                    Input('slider-learning-rate', 'value')])
-    def display_click_image(clickData,
+    def display_click_text(clickData,
                             dataset,
                             iterations,
                             perplexity,
