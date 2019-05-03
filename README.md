@@ -14,11 +14,11 @@ To get started, choose an embedding you want to visualize. When the scatter plot
 First create a virtual environment with conda or venv inside a temp folder, then activate it.
 
 ```
-|- assets                       # CSS assets for the app
-|- data                         # High dimensional vectors before TSNE (and source text as .pkl) 
-|- tsne_vectors                 # 3D vectors after TSNE, for every setting 
+|- assets                       # .css assets for the app
+|- data                         # High dimensional vectors before tsne (and source text as .pkl) 
+|- tsne_vectors                 # 3D vectors after tsne, for every setting 
 |- app.py                       # Dash app to run
-|- config.py                    # TSNE settings for generate_tsne_vectors.py and the app to display
+|- config.py                    # tsne settings for generate_tsne_vectors.py and the app to display
 |- demo.py                      # Detailed functions for Dash app (app.py)
 |- generate_data.ipynb          # Notebook to generate /data 
 |- generate_tsne_vectors.py     # Script to generate /tsne_vectors
