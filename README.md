@@ -1,5 +1,5 @@
 # 20 Newsgroups t-SNE Explorer
-**The purpose of this app is to visually explore how different text embeddings capture document topics.**  I'm using a subset of 5 topics from the 20 Newsgroups dataset, where each document is the body of an email.
+**The purpose of this app is to visually explore how different text embeddings capture document topics.**  I'm using a subset of 5 topics from the 20 Newsgroups dataset, where each document is the body of an email.  The app is hosted at: https://dash-text-tsne.herokuapp.com/ (it may take a while to launch).
 
 This visualisation is built on top of [plotly / dash's tsne visualisation](https://github.com/plotly/dash-tsne).  Please check there for full background!
 
